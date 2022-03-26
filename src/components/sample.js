@@ -90,7 +90,7 @@ const DataTableEditDemo = () => {
         
     },[newProduct, products3])
     const setActiveRowIndex = () => {
-        setProducts3([...products3, ...[{ _id : '0', productId: "" ,name:"", category : "", isActive:"", quantity : "", stock : ""}]])
+        setProducts3([...products3, ...[{ _id : '0', productId: "" ,name:"", category : "", isActive:"", quantity : "", price : ""}]])
         setNewProduct(true);
     }
 
@@ -127,7 +127,7 @@ const DataTableEditDemo = () => {
                         <Column field="category" header="Category" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                         <Column field="isActive" header="Active" body={(rowData)=>{ return rowData.isActive.toString()}} editor={(options) => updateActive(options)} style={{ width: '20%' }}></Column>
                         <Column field="quantity" header="Quantity" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
-                        <Column field="stock" header="Stock" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
+                        <Column field="price" header="Price" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                         <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
                     </DataTable>
                 </div>
