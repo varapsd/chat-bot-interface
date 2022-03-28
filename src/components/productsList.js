@@ -72,6 +72,8 @@ const ProductsList = ()=>{
     }
 
     return (
+        <>
+        <h2>Products List</h2>
         <div className="card p-fluid">
                 <DataTable value={products2} editMode="row" dataKey="_id" editingRows={ editingRows } onRowEditComplete={onRowEditComplete1} responsiveLayout="scroll">
                     <Column field="productId" header="Id" style={{ width: '20%' }}></Column>
@@ -86,6 +88,7 @@ const ProductsList = ()=>{
                     <i className="pi pi-plus-circle" style={{'fontSize': '2em', "alignItems":"right", "cursor":"pointer", "color":"rgb(38, 56, 56)"}} onClick={addRow}></i>
                 </div>
             </div>
+        </>
 
     )
 }

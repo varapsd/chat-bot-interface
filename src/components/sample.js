@@ -117,6 +117,7 @@ const DataTableEditDemo = () => {
     return (
         <div className="datatable-editing-demo">
             <Toast ref={toast} />
+             <h2>Products List</h2>
 
             <div className="card">
 
