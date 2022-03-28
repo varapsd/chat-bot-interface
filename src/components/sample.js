@@ -7,19 +7,24 @@ import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import axios from 'axios';
-
+import { ProgressSpinner } from 'primereact/progressspinner';
+import { Dialog } from 'primereact/dialog';
+import "./order.css"
 const DataTableEditDemo = () => {
 
     const [products3, setProducts3] = useState([]);
     const [newProduct, setNewProduct] = useState(false);
     const [editingRows, setEditingRows] = useState({});
+    const [ loading, setLoading] = useState(false);
     const toast = useRef(null);
 
     const url = "https://demo-gupshup-flow.herokuapp.com/"
     useEffect(()=>{
+        setLoading(true);
         axios.get(url+"getAllProducts")
             .then(function (response) {
                 setProducts3(response.data);
+                setLoading(false)
             })
             .catch(function (error) {
                 console.log(error);
@@ -109,8 +114,12 @@ const DataTableEditDemo = () => {
         );
     }
 
-    const check = (e) => {
-        console.log(e);
+    const modalLoad = ()=>{
+        return(
+        <Dialog visible={loading}>
+            <ProgressSpinner />
+        </Dialog>
+        )
     }
 
 
@@ -120,9 +129,9 @@ const DataTableEditDemo = () => {
              <h2>Products List</h2>
 
             <div className="card">
-
+                { modalLoad() }
                 <div className="p-fluid">
-                    <DataTable value={products3} editMode="row" dataKey="_id" editingRows={editingRows} onRowEditChange={onRowEditChange} onRowEditComplete={onRowEditComplete2} onChange={check} responsiveLayout="scroll">
+                    <DataTable value={products3} editMode="row" dataKey="_id" editingRows={editingRows} onRowEditChange={onRowEditChange} onRowEditComplete={onRowEditComplete2} responsiveLayout="scroll">
                         <Column field="productId" header="Id" style={{ width: '20%' }}></Column>
                         <Column field="name" header="Name" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                         <Column field="category" header="Category" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
