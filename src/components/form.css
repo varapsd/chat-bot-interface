@@ -1,0 +1,14 @@
+.form{
+    width: 100%;
+}
+
+.form div{
+    padding: 5px;
+    display: flex;
+    justify-content:space-between;
+    align-items: center;
+}
+
+.form div label{
+    padding: 5px;
+}

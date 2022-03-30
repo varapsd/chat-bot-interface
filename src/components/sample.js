@@ -9,13 +9,19 @@ import { Toast } from 'primereact/toast';
 import axios from 'axios';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { Dialog } from 'primereact/dialog';
+import { FileUpload } from 'primereact/fileupload';
+import ProductDetails from './productDetails';
 import "./order.css"
 const DataTableEditDemo = () => {
+
 
     const [products3, setProducts3] = useState([]);
     const [newProduct, setNewProduct] = useState(false);
     const [editingRows, setEditingRows] = useState({});
     const [ loading, setLoading] = useState(false);
+    const [ productModal, setProductModal] = useState(false);
+    const [ imageFile, setImageFile] = useState();
+    const [reload, setReload] = useState(false);
     const toast = useRef(null);
 
     const url = "https://demo-gupshup-flow.herokuapp.com/"
@@ -25,16 +31,18 @@ const DataTableEditDemo = () => {
             .then(function (response) {
                 setProducts3(response.data);
                 setLoading(false)
+                setReload(false);
             })
             .catch(function (error) {
                 console.log(error);
             })
-    },[])
+    },[reload])
 
 
     const onRowEditComplete2 = (e) => {
         let _products3 = [...products3];
         let { newData, index } = e;
+        console.log(e);
         console.log(newData);
         if(newData._id === "0"){
             setNewProduct(false)
@@ -43,8 +51,7 @@ const DataTableEditDemo = () => {
                 console.log(response);
                 if(response.data == "OK"){
                     _products3[index] = newData;
-
-                    setProducts3(_products3);
+                    setReload(true);
                 }
                 else{
                     alert("error occuered");
@@ -99,10 +106,15 @@ const DataTableEditDemo = () => {
         setNewProduct(true);
     }
 
+    const addNewProduct = () =>{
+        setProductModal(true);
+    }
+    
 
     const textEditor = (options) => {
         return <InputText type="text" value={options.value} onChange={(e) => options.editorCallback(e.target.value)} />;
     }
+
 
     const updateActive = (options) => {
         return (
@@ -114,38 +126,60 @@ const DataTableEditDemo = () => {
         );
     }
 
+
     const modalLoad = ()=>{
         return(
-        <Dialog visible={loading}>
+        <Dialog className='loaderClass' visible={loading}>
             <ProgressSpinner />
         </Dialog>
         )
     }
 
+    const uploadFile = async (rowData) => {
+        if (imageFile && rowData.productId != 0) {
+            let formData = new FormData()
+            //console.log(e.target.value);
+            formData.append('file', imageFile, rowData.productId+".jpg")
+            const response = await fetch(url+"/image", {
+                method: 'POST',
+                body: formData,
+            })
+        }
+    }
+
+    const saveFile = (e)=>{
+        console.log(e.target.files[0]);
+        setImageFile(e.target.files[0]);
+    }
+    const closeProductModal = ()=>{
+        setProductModal(false);
+    }
 
     return (
         <div className="datatable-editing-demo">
             <Toast ref={toast} />
              <h2>Products List</h2>
-
-            <div className="card">
+            { productModal && <ProductDetails closeProductModal={closeProductModal} />}
+            <div className="card" >
                 { modalLoad() }
                 <div className="p-fluid">
                     <DataTable value={products3} editMode="row" dataKey="_id" editingRows={editingRows} onRowEditChange={onRowEditChange} onRowEditComplete={onRowEditComplete2} responsiveLayout="scroll">
                         <Column field="productId" header="Id" style={{ width: '20%' }}></Column>
                         <Column field="name" header="Name" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                         <Column field="category" header="Category" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
-                        <Column field="isActive" header="Active" body={(rowData)=>{ return rowData.isActive.toString()}} editor={(options) => updateActive(options)} style={{ width: '20%' }}></Column>
-                        <Column field="quantity" header="Quantity" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
+                        <Column field="isActive" header="Active" body={(rowData)=>{ return rowData.isActive.toString()}} editor={(options) => updateActive(options)} style={{ width: '10%' }}></Column>
+                        <Column field="quantity" header="Quantity" editor={(options) => textEditor(options)} style={{ width: '10%' }}></Column>
                         <Column field="price" header="Price" editor={(options) => textEditor(options)} style={{ width: '20%' }}></Column>
                         <Column rowEditor headerStyle={{ width: '10%', minWidth: '8rem' }} bodyStyle={{ textAlign: 'center' }}></Column>
+                        <Column  body={()=>{ return (<input type="file" name="file" onChange={saveFile}/>)}} style={{ width: '20%' }}></Column>
+                        <Column  body={(rowData)=>{ return (<Button type="button" label="upload" onClick={(e)=>uploadFile(rowData)}/>) }} style={{ width: '20%' }}></Column>
                     </DataTable>
-                </div>
-                <div style={{ "marginRight": "50px", "textAlign":"right", "marginTop":"10px"}}>
+                    <div style={{ "marginRight": "50px", "textAlign":"right", "marginTop":"10px"}}>
                     <i className="pi pi-plus-circle" style={{'fontSize': '2em', "alignItems":"right", "cursor":"pointer", "color":"rgb(38, 56, 56)"}} onClick={setActiveRowIndex}></i>
                 </div>
+                </div>
             </div>
-
+            
         </div>
     );
 }
