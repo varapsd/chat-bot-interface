@@ -140,7 +140,7 @@ const DataTableEditDemo = () => {
             let formData = new FormData()
             //console.log(e.target.value);
             formData.append('file', imageFile, rowData.productId+".jpg")
-            const response = await fetch(url+"/image", {
+            const response = await fetch(url+"image", {
                 method: 'POST',
                 body: formData,
             })
