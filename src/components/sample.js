@@ -144,6 +144,9 @@ const DataTableEditDemo = () => {
                 method: 'POST',
                 body: formData,
             })
+            if(response.status == 200){
+                alert("Uploaded successfully !!")
+            }
         }
     }
 
